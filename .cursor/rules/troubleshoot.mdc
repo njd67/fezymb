@@ -1,0 +1,78 @@
+---
+description: Smart troubleshooting API contract (FastAPI)
+globs: client/src/**/*.{tsx,ts}
+alwaysApply: false
+---
+
+# Smart Troubleshooting API — Frontend
+
+Base URL (local dev): `http://127.0.0.1:8000` — webpack proxies `/api/fleets` and `/api/troubleshoot` to FastAPI alongside logs.
+
+All HTTP in `client/src/services/troubleshootService.ts`. TanStack Query in `client/src/hooks/troubleshoot/`.
+
+## Endpoints
+
+| Method | Path | When |
+|--------|------|------|
+| GET | `/api/fleets/dropdown` | Page mount — populate aircraft dropdown |
+| POST | `/api/troubleshoot` | User submits fault description |
+
+### Fleet dropdown response (200)
+
+```json
+[
+  { "id": "uuid-111", "tail_number": "N901VA" },
+  { "id": "uuid-222", "tail_number": "N902VA" }
+]
+```
+
+### Troubleshoot request body
+
+```json
+{
+  "fleet_id": "uuid-111",
+  "fault_description": "Transponder intermittent on climb..."
+}
+```
+
+### Troubleshoot response (200)
+
+```json
+{
+  "summary": {
+    "root_cause_discovery": "...",
+    "recommended_action": "...",
+    "estimated_fix_time_mins": 45,
+    "historical_average_mins": 240,
+    "suggested_part_number": "#XYZ-123"
+  },
+  "historical_matches": [
+    {
+      "id": "res-uuid",
+      "action_taken": "Cleaned corroded connector pins on plug P3.",
+      "labor_minutes": 45
+    }
+  ]
+}
+```
+
+## TypeScript (troubleshootService.ts)
+
+- `FleetDropdownItem` — `{ id, tail_number }`
+- `TroubleshootRequest` — `{ fleet_id, fault_description }`
+- `TroubleshootResponse` — `{ summary, historical_matches }`
+- `formatDuration(mins)` — display helper for fix-time badges
+- `validateTroubleshootRequest()` — client-side guard before POST
+- `parseFastApiError()` — reused from `logService.ts`
+
+## UI
+
+- Route: `/troubleshoot` — `TroubleshootPage` with in-page dashboard sidebar
+- Fleet selection: `SelectField` (native `<select>`), not `SelectBox`
+- Fault input: shared `TextArea`
+- Loading: shared `Spinner` during POST (~2s backend lag)
+- Results: `RootCauseCard`, `SuggestedPartNumber`, `FixTimeComparisonBadge`, `HistoricalMatchesList`
+
+## Errors
+
+FastAPI: `{ "detail": "message" }` or validation array. Use `parseFastApiError`.

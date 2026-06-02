@@ -1,0 +1,65 @@
+export const theme = {
+  colors: {
+    background: '#FAFAFA',
+    surface: '#FFFFFF',
+    navGlass: 'rgba(255, 255, 255, 0.38)',
+    navBorder: 'rgba(46, 16, 101, 0.3)',
+    purpleBorder: '#3B0764',
+    purpleHint: 'rgba(46, 16, 101, 0.2)',
+    text: '#1A1A1A',
+    textMuted: '#6B6B6B',
+    textLight: '#9A9A9A',
+    border: '#E5E4DF',
+    borderFocus: '#1A1A1A',
+    primary: '#1A1A1A',
+    primaryText: '#FFFFFF',
+    accentStart: '#C2410C',
+    accentEnd: '#EA580C',
+    accentMuted: '#FFF7ED',
+    success: '#16A34A',
+    successBg: '#DCFCE7',
+    error: '#DC2626',
+    errorBg: '#FEE2E2',
+    stepActive: '#1A1A1A',
+    stepDone: '#16A34A',
+    stepMuted: '#D4D3CE',
+    tileBg: '#F3F2ED',
+  },
+  gradients: {
+    accent: 'linear-gradient(90deg, #C2410C 0%, #F97316 100%)',
+    purple: 'linear-gradient(135deg, #2E1065 0%, #4C1D95 100%)',
+  },
+  spacing: {
+    xs: '4px',
+    sm: '8px',
+    md: '16px',
+    lg: '24px',
+    xl: '32px',
+    xxl: '48px',
+    xxxl: '64px',
+  },
+  radii: {
+    sm: '6px',
+    md: '10px',
+    lg: '12px',
+    pill: '999px',
+  },
+  shadows: {
+    card: '0 4px 24px rgba(0, 0, 0, 0.06)',
+    cardHover: '0 8px 32px rgba(0, 0, 0, 0.1)',
+    hero: '0 8px 40px rgba(0, 0, 0, 0.06)',
+    nav: '0 1px 0 rgba(0, 0, 0, 0.04)',
+  },
+  fonts: {
+    body: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+  },
+  layout: {
+    maxWidth: '1200px',
+    navHeight: '72px',
+  },
+  breakpoints: {
+    mobile: '768px',
+  },
+} as const;
+
+export type Theme = typeof theme;

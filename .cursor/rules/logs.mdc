@@ -1,0 +1,86 @@
+---
+description: Maintenance log capture API contract (FastAPI)
+globs: client/src/**/*.{tsx,ts}
+alwaysApply: false
+---
+
+# Maintenance Log API — Frontend
+
+Base URL (local dev): `http://127.0.0.1:8000` — webpack proxies `/api/transcribe` and `/api/logs` to FastAPI. Production: set `LOG_API_BASE`.
+
+All HTTP in `client/src/services/logService.ts`. TanStack Query in `client/src/hooks/logs/`.
+
+## User flow
+
+1. Stop recording → `POST /api/transcribe` → 202 `{ log_id, status: "transcribed", raw_text }`
+2. Edit transcript → `PATCH /api/logs/:id` `{ raw_text }` → `POST /api/logs/:id/submit`
+3. Poll `GET /api/logs/:id/status` every 1.5s until `status === "draft"` and `structured_data !== null`
+4. Edit fields → `PUT /api/logs/:id` (all four fields required; use `""` if N/A)
+
+## Status enum
+
+| Status | FE action |
+|--------|-----------|
+| `transcribed` | Editable unstructured transcript + Submit |
+| `pending` / `processing` | Poll status |
+| `draft` | Structured form + Save & commit |
+| `committed` | Success |
+| `failed` | Show `error_message`, New log; stop polling |
+
+Stop polling when: `status === "draft"` AND `structured_data !== null`, OR `status === "failed"`.
+
+## Endpoints
+
+| Method | Path | When |
+|--------|------|------|
+| POST | `/api/transcribe` | Stop recording; multipart `file`, optional `component_type` |
+| PATCH | `/api/logs/:id` | Save edited `raw_text` before submit |
+| POST | `/api/logs/:id/submit` | Submit for AI structuring |
+| GET | `/api/logs/:id/status` | Poll after submit |
+| PUT | `/api/logs/:id` | Commit when `draft` |
+
+### Transcribe response (202)
+
+```json
+{ "log_id": "uuid", "status": "transcribed", "raw_text": "..." }
+```
+
+### Status response (200)
+
+```json
+{
+  "id": "uuid",
+  "status": "draft",
+  "raw_text": "...",
+  "structured_data": { "action": "", "part_number": "", "reference": "", "torque": "" },
+  "error_message": null
+}
+```
+
+### Commit body (PUT)
+
+All four keys required: `action`, `part_number`, `reference`, `torque`.
+
+## TypeScript (logService.ts)
+
+- `StructuredLogData` — fixed four string fields
+- `normalizeStructuredData()` — merge partial API data with `""` defaults
+- `isLogStructuringComplete()` — `draft` + non-null `structured_data`
+- `isLogFailed()` — `status === "failed"`
+- `parseFastApiError()` — FastAPI `detail` string or array
+
+## UI badges (LogCapturePage)
+
+| Badge | Condition |
+|-------|-----------|
+| Recording | Mic active |
+| Transcribing | ingest pending |
+| Transcribed | has log_id, not submitted |
+| Structuring | submitted, polling, not draft/failed |
+| Drafted | structuring complete |
+| Failed | `status === "failed"` |
+| Committed | commit success |
+
+## Errors
+
+FastAPI: `{ "detail": "message" }` or validation array. Use `parseFastApiError`.

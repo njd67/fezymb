@@ -1,0 +1,40 @@
+---
+description: UI styling and component patterns for the React client
+globs: client/src/**/*.{tsx,ts}
+alwaysApply: false
+---
+
+# UI styling
+
+## Style files
+
+- Colocate styled-components in `ComponentName.styles.ts` next to the component (or page)
+- Keep `.tsx` files for logic and markup only; import styled primitives from `.styles.ts`
+- Shared page styles live under `client/src/pages/shared/`
+
+## Theme
+
+Import colors, spacing, radii, and shadows from `theme.ts` via styled-components `theme` prop.
+
+## Typography
+
+- Page titles: `PageHeader` with optional `gradientPhrase`, `subtitle`, `subtext`
+- Step panels: `SectionHeader` for title + subtitle
+
+## Layout
+
+- Pages wrap content in `PageContainer` inside `AppShell`
+- Generous whitespace: use `spacing.xxl` and `spacing.xxxl` for page padding
+- Home features: `FeatureTile` grid with catchy copy
+
+## Guided uploads
+
+- Single right-aligned card: all steps stacked via `UploadStepSection`, future steps disabled until unlocked
+- Accent color is orange (`theme.gradients.accent`), not purple/blue
+- `FeatureTile` has no hover animation
+
+## Inputs
+
+- Use `SelectBox` for categorical choices (hidden radio + clickable box labels, not `<select>` dropdowns)
+- Use `FileDropzone` for file selection (drag-drop + browse)
+- Use `Button` variants: primary, secondary, ghost

@@ -1,0 +1,32 @@
+---
+description: Upload API and client upload service conventions
+globs: client/src/**/upload*,client/src/services/**,server/**
+alwaysApply: false
+---
+
+# Uploads
+
+## Client (`uploadService.ts`)
+
+- `uploadCsv(file, metadata, onProgress?)` → `POST /api/uploads/csv`
+- `uploadPdf(files, metadata, onProgress?)` → `POST /api/uploads/pdf`
+- Uses `XMLHttpRequest` for upload progress
+- Validate before send: extension, size limits (25 MB CSV, 50 MB PDF batch)
+
+## FormData field names
+
+| Endpoint | File field | Metadata |
+|----------|------------|----------|
+| CSV | `file` | `datasetType` |
+| PDF | `files` (array) | `docCategory` |
+
+## Server
+
+- CSV: `multer.single('file')`, store under `server/uploads/csv/`
+- PDF: `multer.array('files', 20)`, store under `server/uploads/pdf/`
+- Response: `{ uploadId, fileNames, storedPath(s) }`
+- Validate mime/extension on server even when client validates
+
+## Swapping to production
+
+Replace disk storage and add auth middleware in `server/src/index.ts` without changing `uploadService` function signatures. Point webpack proxy or client base URL at production API.

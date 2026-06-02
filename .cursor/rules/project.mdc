@@ -1,0 +1,29 @@
+---
+description: Zymbly fezymb monorepo conventions and layout
+alwaysApply: true
+---
+
+# Zymbly upload monorepo
+
+## Layout
+
+- `client/` — React 18 + TypeScript + webpack + styled-components (port 3000)
+- `server/` — Express + multer upload API (port 3001)
+- Root `package.json` uses npm workspaces
+
+## Commands
+
+- `npm install` from repo root
+- `npm run dev` — starts client and server together
+- `npm run build` — production client build
+- `npm run start:server` — API only
+
+## Conventions
+
+- Never commit files under `server/uploads/`
+- Prefer shared components in `client/src/components/` over page-local styled blocks
+- All uploads go through `client/src/services/uploadService.ts`
+- Use theme tokens from `client/src/theme/theme.ts` — no magic hex colors in components
+- Workflow choices use `SelectBox`, not radio button groups
+- Guided uploads use `GuidedUploadLayout` + `UploadStepSection` + `useGuidedUpload`
+- Maintenance log capture (`/logs`) uses `logService.ts` + TanStack Query hooks in `hooks/logs/`; ingest fires on stop recording
