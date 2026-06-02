@@ -1,3 +1,5 @@
+import { apiBase } from './apiBase';
+
 export type UploadKind = 'csv' | 'pdf';
 
 export interface UploadResult {
@@ -79,7 +81,7 @@ export async function uploadCsv(
     formData.append(key, value);
   }
 
-  return uploadWithProgress('/api/uploads/csv', formData, onProgress);
+  return uploadWithProgress(`${apiBase()}/api/uploads/csv`, formData, onProgress);
 }
 
 export async function uploadPdf(
@@ -98,5 +100,5 @@ export async function uploadPdf(
     formData.append(key, value);
   }
 
-  return uploadWithProgress('/api/uploads/pdf', formData, onProgress);
+  return uploadWithProgress(`${apiBase()}/api/uploads/pdf`, formData, onProgress);
 }

@@ -1,4 +1,5 @@
 import { parseFastApiError } from './logService';
+import { apiBase } from './apiBase';
 
 export interface FleetDropdownItem {
   id: string;
@@ -27,10 +28,6 @@ export interface HistoricalMatch {
 export interface TroubleshootResponse {
   summary: TroubleshootSummary;
   historical_matches: HistoricalMatch[];
-}
-
-function apiBase(): string {
-  return '';
 }
 
 function fleetsPath(): string {

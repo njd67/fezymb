@@ -1,3 +1,5 @@
+import { apiBase } from './apiBase';
+
 export type LogStatus =
   | 'transcribed'
   | 'pending'
@@ -137,13 +139,6 @@ export function validateStructuredLogForCommit(
     }
   }
   return null;
-}
-
-function apiBase(): string {
-  if (typeof process !== 'undefined' && process.env.LOG_API_BASE) {
-    return process.env.LOG_API_BASE.replace(/\/$/, '');
-  }
-  return '';
 }
 
 function logsPath(suffix: string): string {
